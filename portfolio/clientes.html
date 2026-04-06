@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portfolio de Clientes — AI Producer Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--neon:#00ffe7;--neon2:#7b2fff;--dark:#020810;--dark2:#040d1a;--text:#c8e6ff;--muted:rgba(200,230,255,0.45);}
+body{background:var(--dark);color:var(--text);font-family:'Rajdhani',sans-serif;overflow-x:hidden;min-height:100vh;}
+
+canvas#bg{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;opacity:0.4;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:linear-gradient(to bottom,rgba(2,8,16,0.97),transparent);backdrop-filter:blur(6px);border-bottom:.5px solid rgba(0,255,231,0.08);}
+.nav-logo{font-family:'Share Tech Mono',monospace;font-size:11px;color:var(--neon);letter-spacing:3px;text-decoration:none;opacity:.7;}
+.btn-back{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:var(--muted);background:none;border:.5px solid rgba(0,255,231,0.2);padding:7px 16px;cursor:pointer;text-decoration:none;transition:all .2s;display:inline-flex;align-items:center;gap:8px;}
+.btn-back:hover{color:var(--neon);border-color:var(--neon);}
+
+/* HEADER */
+.page-header{padding:10rem 2rem 5rem;text-align:center;position:relative;z-index:1;}
+.section-label{font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:4px;color:var(--neon);text-transform:uppercase;margin-bottom:1rem;opacity:.7;}
+.page-header h1{font-size:clamp(2rem,5vw,3.5rem);font-weight:700;line-height:1.1;margin-bottom:1rem;}
+.page-header p{color:var(--muted);font-size:1rem;font-weight:300;max-width:520px;margin:0 auto;}
+
+/* GRID */
+.phones-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:4rem 2.5rem;
+  max-width:1200px;
+  margin:0 auto;
+  padding:2rem 2.5rem 10rem;
+  position:relative;z-index:1;
+}
+
+/* PHONE WRAP */
+.phone-wrap{display:flex;flex-direction:column;align-items:center;gap:.75rem;}
+.phone-name{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--neon);letter-spacing:2px;text-align:center;}
+.phone-cat{font-family:'Share Tech Mono',monospace;font-size:9px;color:var(--muted);letter-spacing:1px;text-align:center;opacity:.5;margin-top:1px;}
+
+/* PHONE SHELL */
+.phone{
+  width:220px;
+  border-radius:36px;
+  border:1.5px solid rgba(0,255,231,0.2);
+  background:#010509;
+  position:relative;
+  overflow:hidden;
+  box-shadow:0 0 40px rgba(0,255,231,0.07),0 20px 50px rgba(0,0,0,0.6);
+  transition:border-color .3s,box-shadow .3s,transform .25s;
+  text-decoration:none;
+  display:flex;
+  flex-direction:column;
+}
+.phone:hover{
+  border-color:rgba(0,255,231,0.5);
+  box-shadow:0 0 60px rgba(0,255,231,0.15),0 24px 60px rgba(0,0,0,0.7);
+  transform:translateY(-8px);
+}
+
+/* top bar */
+.phone-topbar{
+  height:38px;
+  background:rgba(5,15,30,0.95);
+  border-bottom:.5px solid rgba(0,255,231,0.08);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  flex-shrink:0;
+  position:relative;
+  padding-top:4px;
+}
+.phone-notch{width:70px;height:18px;background:#010509;border-radius:0 0 12px 12px;position:absolute;top:0;left:50%;transform:translateX(-50%);z-index:2;}
+.phone-dots{display:flex;gap:5px;margin-top:4px;z-index:1;position:relative;}
+.phone-dots span{width:6px;height:6px;border-radius:50%;}
+.phone-dots span:nth-child(1){background:#ff5f57;}
+.phone-dots span:nth-child(2){background:#febc2e;}
+.phone-dots span:nth-child(3){background:#28c840;}
+
+/* url bar */
+.phone-urlbar{
+  display:flex;align-items:center;gap:5px;
+  background:rgba(0,255,231,0.04);
+  border:.5px solid rgba(0,255,231,0.1);
+  border-radius:3px;
+  margin:5px 8px 6px;
+  padding:4px 8px;
+  flex-shrink:0;
+}
+.url-lock{font-size:8px;opacity:.5;}
+.url-txt{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);opacity:.6;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1;}
+
+/* iframe screen */
+.phone-screen{
+  position:relative;
+  width:100%;
+  height:380px;
+  overflow:hidden;
+  background:#040d1a;
+  flex-shrink:0;
+}
+.phone-screen iframe{
+  width:375px;
+  height:648px;
+  border:none;
+  transform:scale(0.5867);
+  transform-origin:0 0;
+  pointer-events:none;
+  display:block;
+}
+.phone:hover .phone-screen iframe{ pointer-events:all; }
+
+/* loading state */
+.phone-screen::before{
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(135deg,#040d1a 0%,#0a1525 50%,#040d1a 100%);
+  z-index:1;
+  opacity:1;
+  transition:opacity .6s;
+  pointer-events:none;
+}
+.phone-screen.loaded::before{opacity:0;}
+
+.loading-pulse{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  transition:opacity .5s;
+  pointer-events:none;
+}
+.phone-screen.loaded .loading-pulse{opacity:0;}
+.l-dots{display:flex;gap:6px;}
+.l-dot{width:6px;height:6px;border-radius:50%;background:var(--neon);animation:ldot 1.2s ease infinite;}
+.l-dot:nth-child(2){animation-delay:.15s;background:var(--neon2);}
+.l-dot:nth-child(3){animation-delay:.3s;background:var(--neon);}
+@keyframes ldot{0%,80%,100%{transform:scale(.5);opacity:.3}40%{transform:scale(1);opacity:1}}
+.l-txt{font-family:'Share Tech Mono',monospace;font-size:8px;color:var(--muted);letter-spacing:2px;opacity:.5;}
+
+/* scan line on hover */
+.phone-scanline{position:absolute;left:0;right:0;height:1.5px;background:linear-gradient(to right,transparent,rgba(0,255,231,0.4),transparent);top:38px;animation:scanD 3s ease-in-out infinite;opacity:0;z-index:5;pointer-events:none;}
+.phone:hover .phone-scanline{opacity:1;}
+@keyframes scanD{0%{top:38px;opacity:0}8%{opacity:1}92%{opacity:1}100%{top:418px;opacity:0}}
+
+/* bottom bar */
+.phone-footer{
+  height:32px;
+  background:rgba(5,15,30,0.95);
+  border-top:.5px solid rgba(0,255,231,0.07);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.phone-footer-line{width:60px;height:4px;background:rgba(0,255,231,0.15);border-radius:2px;}
+
+/* bottom overlay on hover */
+.phone-hover-overlay{
+  position:absolute;bottom:32px;left:0;right:0;
+  background:linear-gradient(to top,rgba(2,8,16,0.92) 0%,transparent 100%);
+  height:80px;
+  display:flex;align-items:flex-end;justify-content:center;
+  padding-bottom:12px;
+  opacity:0;transition:opacity .25s;
+  z-index:6;
+}
+.phone:hover .phone-hover-overlay{opacity:1;}
+.phone-hover-cta{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--neon);border:.5px solid rgba(0,255,231,0.5);padding:5px 14px;background:rgba(2,8,16,0.8);}
+
+/* neon accent top edge per color */
+.phone[data-c="neon"]   { border-color:rgba(0,255,231,0.25); }
+.phone[data-c="violet"] { border-color:rgba(123,47,255,0.3); }
+.phone[data-c="rose"]   { border-color:rgba(255,79,155,0.3); }
+.phone[data-c="amber"]  { border-color:rgba(255,179,71,0.3); }
+.phone[data-c="blue"]   { border-color:rgba(79,179,255,0.3); }
+
+.phone[data-c="neon"]:hover   { border-color:rgba(0,255,231,0.6); box-shadow:0 0 60px rgba(0,255,231,.18),0 24px 60px rgba(0,0,0,.7); }
+.phone[data-c="violet"]:hover { border-color:rgba(123,47,255,0.7); box-shadow:0 0 60px rgba(123,47,255,.2),0 24px 60px rgba(0,0,0,.7); }
+.phone[data-c="rose"]:hover   { border-color:rgba(255,79,155,0.7); box-shadow:0 0 60px rgba(255,79,155,.18),0 24px 60px rgba(0,0,0,.7); }
+.phone[data-c="amber"]:hover  { border-color:rgba(255,179,71,0.7); box-shadow:0 0 60px rgba(255,179,71,.18),0 24px 60px rgba(0,0,0,.7); }
+.phone[data-c="blue"]:hover   { border-color:rgba(79,179,255,0.7); box-shadow:0 0 60px rgba(79,179,255,.18),0 24px 60px rgba(0,0,0,.7); }
+
+/* visit link */
+.phone-visit{font-family:'Share Tech Mono',monospace;font-size:9px;letter-spacing:2px;color:var(--muted);text-decoration:none;border:.5px solid rgba(0,255,231,0.12);padding:6px 14px;transition:all .2s;}
+.phone-visit:hover{color:var(--neon);border-color:var(--neon);}
+
+/* footer */
+footer{border-top:.5px solid rgba(0,255,231,0.06);padding:2rem 2.5rem;text-align:center;position:relative;z-index:1;}
+footer p{font-family:'Share Tech Mono',monospace;font-size:10px;color:var(--muted);opacity:.4;letter-spacing:1px;}
+
+/* mobile */
+@media(max-width:680px){
+  nav{padding:.8rem 1.2rem;}
+  .phones-grid{grid-template-columns:repeat(2,1fr);gap:2.5rem 1rem;padding:1rem 1rem 6rem;}
+  .phone,.phone-wrap{width:100%;}
+  .phone{max-width:200px;}
+}
+@media(max-width:420px){
+  .phones-grid{grid-template-columns:1fr;}
+  .phone{max-width:240px;}
+}
+.lang-btn.active{color:var(--neon)!important;border-color:rgba(0,255,231,0.3)!important;}
+.lang-btn:hover{color:var(--neon)!important;}
+</style>
+</head>
+<body>
+
+<canvas id="bg"></canvas>
+
+<nav>
+  <a class="nav-logo" href="../ai_producer_studio_landing_v2.html">AI // PRODUCER STUDIO</a>
+  <div class="lang-selector" style="display:flex;gap:.2rem;align-items:center;">
+    <button class="lang-btn active" onclick="setLang('es')" style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(200,230,255,0.45);background:none;border:.5px solid transparent;padding:4px 8px;cursor:pointer;transition:all .15s;">ES</button>
+    <button class="lang-btn" onclick="setLang('pt')" style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(200,230,255,0.45);background:none;border:.5px solid transparent;padding:4px 8px;cursor:pointer;transition:all .15s;">PT</button>
+    <button class="lang-btn" onclick="setLang('en')" style="font-family:'Share Tech Mono',monospace;font-size:10px;letter-spacing:2px;color:rgba(200,230,255,0.45);background:none;border:.5px solid transparent;padding:4px 8px;cursor:pointer;transition:all .15s;">EN</button>
+  </div>
+  <a class="btn-back" href="../ai_producer_studio_landing_v2.html">← VOLVER</a>
+</nav>
+
+<div class="page-header">
+  <div class="section-label" data-i18n="label">// CASOS REALES</div>
+  <h1><span data-i18n="h1pre">Landings de</span> <em style="color:var(--neon);font-style:normal;" data-i18n="h1em">Clientes</em></h1>
+  <p data-i18n="sub">Proyectos entregados. Cada uno diseñado para convertir visitas en leads desde el día uno.</p>
+</div>
+
+<div class="phones-grid" id="grid"></div>
+
+<footer>
+  <p>© 2026 // AI PRODUCER STUDIO // FLORIANÓPOLIS BR</p>
+</footer>
+
+<script>
+const T={
+  es:{
+    'label':'// CASOS REALES','h1pre':'Landings de','h1em':'Clientes',
+    'sub':'Proyectos entregados. Cada uno diseñado para convertir visitas en leads desde el día uno.',
+    'loading':'CARGANDO_','hover.cta':'VISITAR SITIO →','visit.btn':'ABRIR →',
+    'cat_0':'ARQUITECTURA','cat_1':'SALÓN DE BELLEZA','cat_2':'CLUB DE BENEFICIOS',
+    'cat_3':'FITNESS & SALUD','cat_4':'BIENESTAR','cat_5':'BARBERÍA',
+    'cat_6':'ESTÉTICA','cat_7':'VETERINARIA',
+  },
+  pt:{
+    'label':'// CASOS REAIS','h1pre':'Landings de','h1em':'Clientes',
+    'sub':'Projetos entregues. Cada um projetado para converter visitas em leads desde o primeiro dia.',
+    'loading':'CARREGANDO_','hover.cta':'VISITAR SITE →','visit.btn':'ABRIR →',
+    'cat_0':'ARQUITETURA','cat_1':'SALÃO DE BELEZA','cat_2':'CLUBE DE BENEFÍCIOS',
+    'cat_3':'FITNESS & SAÚDE','cat_4':'BEM-ESTAR','cat_5':'BARBEARIA',
+    'cat_6':'ESTÉTICA','cat_7':'VETERINÁRIA',
+  },
+  en:{
+    'label':'// REAL CASES','h1pre':'Client','h1em':'Landings',
+    'sub':'Delivered projects. Each one designed to convert visits into leads from day one.',
+    'loading':'LOADING_','hover.cta':'VISIT SITE →','visit.btn':'OPEN →',
+    'cat_0':'ARCHITECTURE','cat_1':'BEAUTY SALON','cat_2':'BENEFITS CLUB',
+    'cat_3':'FITNESS & HEALTH','cat_4':'WELLNESS','cat_5':'BARBERSHOP',
+    'cat_6':'AESTHETICS','cat_7':'VETERINARY',
+  },
+};
+function setLang(lang){
+  if(!['es','pt','en'].includes(lang))return;
+  localStorage.setItem('aps_lang',lang);
+  document.documentElement.lang=lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.textContent.trim().toLowerCase()===lang));
+  document.querySelectorAll('[data-i18n]').forEach(el=>{const v=T[lang][el.dataset.i18n];if(v!==undefined)el.textContent=v;});
+}
+
+const SITES = [
+  { name:'Paludo Arq',          url:'https://paludoarq.netlify.app/',                    c:'amber' },
+  { name:'Josy Cunha',          url:'https://josycunha.netlify.app/',                    c:'rose'  },
+  { name:'AESBA',               url:'https://aesba-clubbeneficios-ver1.netlify.app/',    c:'violet'},
+  { name:'Körper',              url:'https://korper1.netlify.app/',                      c:'neon'  },
+  { name:'Harmoniza',           url:'https://harmoniza.netlify.app/',                    c:'violet'},
+  { name:'Executive Barbería',  url:'https://executivebarberia.netlify.app/',            c:'amber' },
+  { name:'Lotus Belleza',       url:'https://lotusbelleza.netlify.app/',                 c:'rose'  },
+  { name:'All Pets OK',         url:'https://allpetsok.netlify.app/',                    c:'neon'  },
+];
+
+const grid = document.getElementById('grid');
+
+SITES.forEach((site, idx) => {
+  const shortUrl = site.url.replace('https://','').replace(/\/$/,'');
+  const screenId = 'screen-' + site.name.replace(/\s/g,'');
+
+  const wrap = document.createElement('div');
+  wrap.className = 'phone-wrap';
+  wrap.innerHTML = `
+    <div class="phone-name">${site.name.toUpperCase()}</div>
+    <div class="phone-cat" data-i18n="cat_${idx}"></div>
+    <div class="phone" data-c="${site.c}">
+      <div class="phone-scanline"></div>
+      <div class="phone-topbar">
+        <div class="phone-notch"></div>
+        <div class="phone-dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="phone-urlbar">
+        <span class="url-lock">
+          <svg width="8" height="9" viewBox="0 0 8 9" fill="none" style="opacity:.4;vertical-align:middle"><rect x="1" y="4" width="6" height="5" rx="1" fill="currentColor"/><path d="M2 4V2.5a2 2 0 0 1 4 0V4" stroke="currentColor" stroke-width="1.2" fill="none"/></svg>
+        </span>
+        <span class="url-txt">${shortUrl}</span>
+      </div>
+      <div class="phone-screen" id="${screenId}">
+        <div class="loading-pulse">
+          <div class="l-dots"><span class="l-dot"></span><span class="l-dot"></span><span class="l-dot"></span></div>
+          <div class="l-txt" data-i18n="loading">CARGANDO_</div>
+        </div>
+        <iframe
+          src="${site.url}"
+          loading="lazy"
+          title="${site.name}"
+          onload="document.getElementById('${screenId}').classList.add('loaded')"
+        ></iframe>
+      </div>
+      <div class="phone-hover-overlay">
+        <div class="phone-hover-cta" data-i18n="hover.cta">VISITAR SITIO →</div>
+      </div>
+      <div class="phone-footer"><div class="phone-footer-line"></div></div>
+    </div>
+    <a class="phone-visit" href="${site.url}" target="_blank" rel="noopener" data-i18n="visit.btn">ABRIR →</a>
+  `;
+
+  // click on phone body navigates to site
+  wrap.querySelector('.phone').addEventListener('click', () => window.open(site.url, '_blank'));
+  wrap.querySelector('.phone').style.cursor = 'pointer';
+
+  grid.appendChild(wrap);
+});
+
+(function(){
+  const saved=localStorage.getItem('aps_lang');
+  if(saved&&['es','pt','en'].includes(saved)){setLang(saved);return;}
+  const nav=(navigator.language||'es').toLowerCase();
+  if(nav.startsWith('pt'))setLang('pt');
+  else if(nav.startsWith('en'))setLang('en');
+  else setLang('es');
+})();
+
+// canvas bg
+const canvas=document.getElementById('bg');
+const ctx=canvas.getContext('2d');
+let W,H;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+const pts=Array.from({length:40},()=>({x:Math.random()*innerWidth,y:Math.random()*innerHeight,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.3,r:Math.random()*1.2+.3,a:Math.random()}));
+function loop(){
+  ctx.clearRect(0,0,W,H);
+  ctx.strokeStyle='rgba(0,255,231,0.04)';ctx.lineWidth=.5;
+  const sz=50;
+  for(let x=0;x<W;x+=sz){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+  for(let y=0;y<H;y+=sz){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fillStyle=`rgba(0,255,231,${p.a*.4})`;ctx.fill();
+  });
+  requestAnimationFrame(loop);
+}
+loop();
+</script>
+</body>
+</html>
