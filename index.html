@@ -794,6 +794,152 @@ function resetGanadores(){
   document.getElementById('ganadoresFormEl').reset();
   document.getElementById('ganadores').scrollIntoView({behavior:'smooth'});
 }
+
+// ─── CONFIG CRIS ───
+const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
+
+// ─── CHAT WIDGET CRIS ─────────────────────────────────────────────────────────
+(function(){
+  function getSessionId(){
+    let id = localStorage.getItem('cris_session_id');
+    if(!id){ id = 'ws_' + Math.random().toString(36).slice(2) + Date.now().toString(36); localStorage.setItem('cris_session_id', id); }
+    return id;
+  }
+  let sessionId = getSessionId();
+  let isOpen = false;
+  let isGenerating = false;
+  let pollInterval = null;
+
+  const CSS = `
+    #cris-btn{position:fixed;bottom:90px;right:24px;z-index:9999;width:56px;height:56px;border-radius:50%;border:2px solid #00ffe7;background:#0a0a12;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px #00ffe740;transition:box-shadow .2s;}
+    #cris-btn:hover{box-shadow:0 0 30px #00ffe7aa;}
+    #cris-btn svg{width:26px;height:26px;}
+    #cris-panel{position:fixed;bottom:158px;right:24px;z-index:9998;width:340px;max-width:calc(100vw - 32px);background:#0d0d1a;border:1px solid #00ffe730;border-radius:14px;box-shadow:0 0 40px #00ffe718;display:flex;flex-direction:column;overflow:hidden;transform:scale(0.92) translateY(16px);transform-origin:bottom right;opacity:0;pointer-events:none;transition:transform .2s ease,opacity .2s ease;max-height:520px;}
+    #cris-panel.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all;}
+    #cris-header{padding:14px 16px;background:#12122a;border-bottom:1px solid #00ffe718;display:flex;align-items:center;gap:10px;}
+    #cris-header .avatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#00ffe7);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;color:#0a0a12;flex-shrink:0;}
+    #cris-header .info .name{font-size:13px;font-weight:600;color:#e0e0ff;letter-spacing:.04em;}
+    #cris-header .info .status{font-size:11px;color:#00ffe7;display:flex;align-items:center;gap:4px;}
+    #cris-header .info .status::before{content:'';width:6px;height:6px;border-radius:50%;background:#00ffe7;display:inline-block;}
+    #cris-close{margin-left:auto;background:none;border:none;color:#555;cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;}
+    #cris-close:hover{color:#e0e0ff;}
+    #cris-messages{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:#00ffe720 transparent;}
+    .cm{max-width:80%;padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.5;word-break:break-word;}
+    .cm.bot{background:#1a1a35;color:#c8c8e8;border-bottom-left-radius:3px;align-self:flex-start;}
+    .cm.user{background:linear-gradient(135deg,#8b5cf6,#6d28d9);color:#fff;border-bottom-right-radius:3px;align-self:flex-end;}
+    .cm.typing{background:#1a1a35;color:#8888aa;font-style:italic;}
+    #cris-input-row{padding:10px 12px;border-top:1px solid #00ffe718;display:flex;gap:8px;background:#0d0d1a;}
+    #cris-input{flex:1;background:#12122a;border:1px solid #00ffe730;border-radius:8px;padding:8px 12px;color:#e0e0ff;font-size:13px;outline:none;resize:none;font-family:inherit;}
+    #cris-input:focus{border-color:#00ffe760;}
+    #cris-send{background:linear-gradient(135deg,#8b5cf6,#00ffe740);border:1px solid #00ffe740;border-radius:8px;color:#e0e0ff;width:38px;height:38px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:box-shadow .15s;}
+    #cris-send:hover{box-shadow:0 0 12px #8b5cf660;}
+    #cris-send svg{width:16px;height:16px;}
+    @media(max-width:400px){#cris-panel{width:calc(100vw - 16px);right:8px;}#cris-btn{right:12px;bottom:12px;}}
+  `;
+  const styleEl = document.createElement('style');
+  styleEl.textContent = CSS;
+  document.head.appendChild(styleEl);
+
+  const wrapper = document.createElement('div');
+  wrapper.innerHTML = `
+    <button id="cris-btn" title="Hablar con Cris" aria-label="Abrir chat con Cris">
+      <svg viewBox="0 0 24 24" fill="none" stroke="#00ffe7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+      </svg>
+    </button>
+    <div id="cris-panel">
+      <div id="cris-header">
+        <div class="avatar">C</div>
+        <div class="info">
+          <div class="name">Cris — AI Producer Studio</div>
+          <div class="status">en línea</div>
+        </div>
+        <button id="cris-close" aria-label="Cerrar chat">×</button>
+      </div>
+      <div id="cris-messages"></div>
+      <div id="cris-input-row">
+        <textarea id="cris-input" rows="1" placeholder="Escribí tu mensaje..."></textarea>
+        <button id="cris-send" aria-label="Enviar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(wrapper);
+
+  const btn   = document.getElementById('cris-btn');
+  const panel = document.getElementById('cris-panel');
+  const msgs  = document.getElementById('cris-messages');
+  const input = document.getElementById('cris-input');
+  const send  = document.getElementById('cris-send');
+  const close = document.getElementById('cris-close');
+
+  function addMsg(text, type){
+    const el = document.createElement('div');
+    el.className = 'cm ' + type;
+    el.textContent = text;
+    msgs.appendChild(el);
+    msgs.scrollTop = msgs.scrollHeight;
+    return el;
+  }
+  function removeTyping(){ const t = msgs.querySelector('.typing'); if(t) t.remove(); }
+
+  async function sendMessage(text){
+    if(!text.trim() || isGenerating) return;
+    addMsg(text, 'user');
+    input.value = '';
+    input.style.height = 'auto';
+    addMsg('Cris está escribiendo...', 'typing');
+    try {
+      const res = await fetch(CRIS_API_URL + '/api/web-chat', {
+        method:'POST', headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ session_id: sessionId, message: text })
+      });
+      const data = await res.json();
+      removeTyping();
+      if(data.generating){
+        isGenerating = true;
+        addMsg(data.reply, 'bot');
+        addMsg('Preparando tu diagnóstico completo...', 'typing');
+        pollInterval = setInterval(async () => {
+          try {
+            const pr = await fetch(CRIS_API_URL + '/api/web-chat/report/' + sessionId);
+            const pd = await pr.json();
+            if(pd.ready){ clearInterval(pollInterval); isGenerating=false; removeTyping(); addMsg(pd.reply,'bot'); }
+          } catch(e){}
+        }, 3000);
+      } else {
+        addMsg(data.reply, 'bot');
+      }
+    } catch(err){ removeTyping(); addMsg('Error de conexión. Intentá de nuevo.', 'bot'); }
+  }
+
+  async function openChat(){
+    isOpen = true;
+    panel.classList.add('open');
+    if(msgs.children.length === 0){
+      addMsg('Cris está escribiendo...', 'typing');
+      try {
+        const res = await fetch(CRIS_API_URL + '/api/web-chat', {
+          method:'POST', headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ session_id: sessionId, message: 'hola' })
+        });
+        const data = await res.json();
+        removeTyping();
+        addMsg(data.reply, 'bot');
+      } catch(e){ removeTyping(); addMsg('Hola, soy Cris de AI Producer Studio. ¿En qué te puedo ayudar?','bot'); }
+    }
+    setTimeout(() => input.focus(), 200);
+  }
+
+  btn.addEventListener('click', () => { isOpen ? (isOpen=false, panel.classList.remove('open')) : openChat(); });
+  close.addEventListener('click', () => { isOpen=false; panel.classList.remove('open'); });
+  send.addEventListener('click', () => sendMessage(input.value));
+  input.addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(input.value); } });
+  input.addEventListener('input', () => { input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,80)+'px'; });
+})();
 </script>
 </body>
 </html>
