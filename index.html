@@ -810,6 +810,28 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   let isGenerating = false;
   let pollInterval = null;
 
+  // ─── Persistencia de mensajes en localStorage ─────────────────────────────
+  const STORAGE_KEY = 'cris_messages_' + sessionId;
+  function saveMessages(){
+    const nodes = msgs ? Array.from(msgs.querySelectorAll('.cm:not(.typing)')).map(el=>({
+      html: el.innerHTML, type: el.classList.contains('user')?'user':'bot'
+    })) : [];
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(nodes)); } catch(e){}
+  }
+  function restoreMessages(){
+    try {
+      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      saved.forEach(({html, type})=>{
+        const el = document.createElement('div');
+        el.className = 'cm ' + type;
+        el.innerHTML = html;
+        msgs.appendChild(el);
+      });
+      if(saved.length > 0) msgs.scrollTop = msgs.scrollHeight;
+      return saved.length > 0;
+    } catch(e){ return false; }
+  }
+
   const CSS = `
     #cris-btn{position:fixed;bottom:90px;right:24px;z-index:9999;width:56px;height:56px;border-radius:50%;border:2px solid #00ffe7;background:#0a0a12;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px #00ffe740;transition:box-shadow .2s;}
     #cris-btn:hover{box-shadow:0 0 30px #00ffe7aa;}
@@ -879,9 +901,14 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   function addMsg(text, type){
     const el = document.createElement('div');
     el.className = 'cm ' + type;
-    el.textContent = text;
+    // Renderizar saltos de línea y formato básico (negrita *texto*)
+    el.innerHTML = text
+      .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      .replace(/\*(.*?)\*/g,'<strong>$1</strong>')
+      .replace(/\n/g,'<br>');
     msgs.appendChild(el);
     msgs.scrollTop = msgs.scrollHeight;
+    if(type !== 'typing') saveMessages();
     return el;
   }
   function removeTyping(){ const t = msgs.querySelector('.typing'); if(t) t.remove(); }
@@ -920,16 +947,20 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
     isOpen = true;
     panel.classList.add('open');
     if(msgs.children.length === 0){
-      addMsg('Cris está escribiendo...', 'typing');
-      try {
-        const res = await fetch(CRIS_API_URL + '/api/web-chat', {
-          method:'POST', headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ session_id: sessionId, message: 'hola' })
-        });
-        const data = await res.json();
-        removeTyping();
-        addMsg(data.reply, 'bot');
-      } catch(e){ removeTyping(); addMsg('Hola, soy Cris de AI Producer Studio. ¿En qué te puedo ayudar?','bot'); }
+      const hasHistory = restoreMessages();
+      if(!hasHistory){
+        // Sesión nueva — saludar
+        addMsg('Cris está escribiendo...', 'typing');
+        try {
+          const res = await fetch(CRIS_API_URL + '/api/web-chat', {
+            method:'POST', headers:{'Content-Type':'application/json'},
+            body: JSON.stringify({ session_id: sessionId, message: 'hola' })
+          });
+          const data = await res.json();
+          removeTyping();
+          addMsg(data.reply, 'bot');
+        } catch(e){ removeTyping(); addMsg('Hola, soy Cris de AI Producer Studio. ¿En qué te puedo ayudar?','bot'); }
+      }
     }
     setTimeout(() => input.focus(), 200);
   }
