@@ -90,6 +90,26 @@ section { position:relative; z-index:1; }
 .service-card h3 { font-size:1.3rem; font-weight:700; margin-bottom:.75rem; letter-spacing:.5px; }
 .service-card p { font-size:.9rem; color:var(--muted); line-height:1.7; font-weight:300; }
 
+/* ─── CONSULTORÍA EMPRESARIAL ─── */
+.consultoria { padding:8rem 2rem; position:relative; overflow:hidden; }
+.consultoria-bg { position:absolute; inset:0; background:radial-gradient(ellipse at 30% 50%,rgba(0,255,231,0.07) 0%,transparent 65%); pointer-events:none; }
+.consultoria-inner { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:5rem; align-items:center; position:relative; }
+.consultoria-points { display:flex; flex-direction:column; gap:.75rem; margin:2rem 0 2.5rem; }
+.consultoria-point { display:flex; align-items:flex-start; gap:.75rem; font-size:.9rem; color:var(--muted); font-weight:300; line-height:1.6; }
+.consultoria-point::before { content:'//'; font-family:'Share Tech Mono',monospace; color:var(--neon); font-size:.8rem; opacity:.7; flex-shrink:0; margin-top:2px; }
+.consultoria-visual { border:.5px solid rgba(0,255,231,0.15); padding:2.5rem; background:rgba(4,13,26,0.7); position:relative; }
+.consultoria-visual-line { position:absolute; left:0; right:0; height:1px; background:linear-gradient(to right,transparent,var(--neon),transparent); top:0; animation:scan 3s ease-in-out infinite; box-shadow:0 0 8px var(--neon); }
+.consultoria-scan-label { font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--neon); letter-spacing:3px; opacity:.6; margin-bottom:1.5rem; }
+.consultoria-scan-item { display:flex; justify-content:space-between; align-items:center; padding:.6rem 0; border-bottom:.5px solid rgba(0,255,231,0.06); font-family:'Share Tech Mono',monospace; font-size:11px; }
+.consultoria-scan-item:last-child { border-bottom:none; }
+.consultoria-scan-key { color:var(--muted); letter-spacing:1px; }
+.consultoria-scan-val { color:var(--neon); letter-spacing:1px; }
+.consultoria-tag { display:inline-block; font-family:'Share Tech Mono',monospace; font-size:10px; color:var(--neon); letter-spacing:3px; border:.5px solid rgba(0,255,231,0.25); padding:4px 12px; margin-bottom:1.2rem; opacity:.8; }
+@media(max-width:768px){
+  .consultoria-inner { grid-template-columns:1fr; gap:3rem; }
+  .consultoria-visual { display:none; }
+}
+
 /* ─── LEAD CAPTURE (DIAGNÓSTICO) ─── */
 .scan-section { padding:8rem 2rem; position:relative; overflow:hidden; }
 .scan-bg { position:absolute; inset:0; background:radial-gradient(ellipse at center,rgba(123,47,255,0.12) 0%,transparent 70%); pointer-events:none; }
@@ -300,6 +320,59 @@ footer { border-top:.5px solid rgba(0,255,231,0.08); padding:2rem 2.5rem; positi
       <div class="service-card"><div class="service-icon" data-i18n="svc.05.icon">MOD_05 // MKT</div><h3 data-i18n="svc.05.title">Marketing Digital</h3><p data-i18n="svc.05.desc">Campañas en Google Ads y TikTok optimizadas para artistas y negocios — con datos, no intuición.</p></div>
       <div class="service-card"><div class="service-icon" data-i18n="svc.06.icon">MOD_06 // MKTA</div><h3 data-i18n="svc.06.title">Marketing Digital Automatizado</h3><p data-i18n="svc.06.desc">Contenido, emails y publicaciones en redes generados y programados con IA — tu marca activa 24/7 sin intervención humana.</p></div>
       <div class="service-card"><div class="service-icon" data-i18n="svc.07.icon">MOD_07 // LABEL</div><h3 data-i18n="svc.07.title">Sello Discográfico IA</h3><p data-i18n="svc.07.desc">Producción, distribución y posicionamiento de artistas generados con IA en plataformas de streaming.</p></div>
+    </div>
+  </section>
+
+  <!-- CONSULTORÍA EMPRESARIAL IA -->
+  <section class="consultoria reveal" id="consultoria">
+    <div class="consultoria-bg"></div>
+    <div class="consultoria-inner">
+      <div class="consultoria-text">
+        <div class="consultoria-tag" data-i18n="cons.tag">// CONSULTORÍA EMPRESARIAL</div>
+        <div class="section-label" data-i18n="cons.label">// IMPLEMENTACIÓN DE IA</div>
+        <h2 class="section-title" data-i18n-html="cons.title">Implementá IA<br>en tu empresa.<br><em style="color:var(--neon);font-style:normal;">Ahora.</em></h2>
+        <p style="color:var(--muted);font-weight:300;line-height:1.8;margin-bottom:1.5rem;font-size:.95rem;" data-i18n="cons.desc">
+          Escaneamos tu operación de punta a punta y mapeamos cada punto donde la IA puede trabajar por vos — procesos manuales, tiempo del equipo, ventas, atención al cliente, costos. Sin tecnicismos: un diagnóstico claro con implementación real.
+        </p>
+        <div class="consultoria-points">
+          <div class="consultoria-point" data-i18n="cons.p1">Workflow y cuellos de botella operativos</div>
+          <div class="consultoria-point" data-i18n="cons.p2">Tiempo productivo de tus empleados</div>
+          <div class="consultoria-point" data-i18n="cons.p3">Ventas, seguimiento y atención al cliente</div>
+          <div class="consultoria-point" data-i18n="cons.p4">Costos que la automatización puede eliminar</div>
+        </div>
+        <p style="color:var(--muted);font-weight:300;font-size:.88rem;line-height:1.7;margin-bottom:2rem;border-left:1px solid rgba(0,255,231,0.25);padding-left:1rem;" data-i18n="cons.urgencia">
+          Las empresas que ya lo implementaron redujeron costos, liberaron horas y vendieron más. Las que esperan — lo van a hacer igual, pero cuando la ventaja ya la tiene otro.
+        </p>
+        <button class="btn-primary" onclick="navTo('diagnostico')" data-i18n="cons.cta">QUIERO MI DIAGNÓSTICO →</button>
+      </div>
+      <div class="consultoria-visual">
+        <div class="consultoria-visual-line"></div>
+        <div class="consultoria-scan-label" data-i18n="cons.vis.label">SCANNING_OPERACION //</div>
+        <div class="consultoria-scan-item">
+          <span class="consultoria-scan-key" data-i18n="cons.vis.k1">ATENCION_CLIENTES</span>
+          <span class="consultoria-scan-val" data-i18n="cons.vis.v1">AUTOMATIZABLE</span>
+        </div>
+        <div class="consultoria-scan-item">
+          <span class="consultoria-scan-key" data-i18n="cons.vis.k2">SEGUIMIENTO_LEADS</span>
+          <span class="consultoria-scan-val" data-i18n="cons.vis.v2">AUTOMATIZABLE</span>
+        </div>
+        <div class="consultoria-scan-item">
+          <span class="consultoria-scan-key" data-i18n="cons.vis.k3">REPORTES_INTERNOS</span>
+          <span class="consultoria-scan-val" data-i18n="cons.vis.v3">AUTOMATIZABLE</span>
+        </div>
+        <div class="consultoria-scan-item">
+          <span class="consultoria-scan-key" data-i18n="cons.vis.k4">CONTENIDO_RRSS</span>
+          <span class="consultoria-scan-val" data-i18n="cons.vis.v4">AUTOMATIZABLE</span>
+        </div>
+        <div class="consultoria-scan-item">
+          <span class="consultoria-scan-key" data-i18n="cons.vis.k5">FACTURACION_ADMIN</span>
+          <span class="consultoria-scan-val" style="color:#7b2fff;" data-i18n="cons.vis.v5">PARCIAL</span>
+        </div>
+        <div class="consultoria-scan-item" style="margin-top:1rem;padding-top:1rem;border-top:.5px solid rgba(0,255,231,0.12);">
+          <span class="consultoria-scan-key" style="color:var(--neon);opacity:1;" data-i18n="cons.vis.total.k">POTENCIAL_AHORRO</span>
+          <span class="consultoria-scan-val" style="font-size:1rem;" data-i18n="cons.vis.total.v">+60%</span>
+        </div>
+      </div>
     </div>
   </section>
 
@@ -528,6 +601,15 @@ const T = {
     'svc.05.icon':'MOD_05 // MKT','svc.05.title':'Marketing Digital','svc.05.desc':'Campañas en Google Ads y TikTok optimizadas para artistas y negocios — con datos, no intuición.',
     'svc.06.icon':'MOD_06 // MKTA','svc.06.title':'Marketing Digital Automatizado','svc.06.desc':'Contenido, emails y publicaciones en redes generados y programados con IA — tu marca activa 24/7 sin intervención humana.',
     'svc.07.icon':'MOD_07 // LABEL','svc.07.title':'Sello Discográfico IA','svc.07.desc':'Producción, distribución y posicionamiento de artistas generados con IA en plataformas de streaming.',
+    'cons.tag':'// CONSULTORÍA EMPRESARIAL','cons.label':'// IMPLEMENTACIÓN DE IA',
+    'cons.title':'Implementá IA<br>en tu empresa.<br><em style="color:var(--neon);font-style:normal;">Ahora.</em>',
+    'cons.desc':'Escaneamos tu operación de punta a punta y mapeamos cada punto donde la IA puede trabajar por vos — procesos manuales, tiempo del equipo, ventas, atención al cliente, costos. Sin tecnicismos: un diagnóstico claro con implementación real.',
+    'cons.p1':'Workflow y cuellos de botella operativos','cons.p2':'Tiempo productivo de tus empleados','cons.p3':'Ventas, seguimiento y atención al cliente','cons.p4':'Costos que la automatización puede eliminar',
+    'cons.urgencia':'Las empresas que ya lo implementaron redujeron costos, liberaron horas y vendieron más. Las que esperan — lo van a hacer igual, pero cuando la ventaja ya la tiene otro.',
+    'cons.cta':'QUIERO MI DIAGNÓSTICO →','cons.vis.label':'SCANNING_OPERACION //',
+    'cons.vis.k1':'ATENCION_CLIENTES','cons.vis.v1':'AUTOMATIZABLE','cons.vis.k2':'SEGUIMIENTO_LEADS','cons.vis.v2':'AUTOMATIZABLE',
+    'cons.vis.k3':'REPORTES_INTERNOS','cons.vis.v3':'AUTOMATIZABLE','cons.vis.k4':'CONTENIDO_RRSS','cons.vis.v4':'AUTOMATIZABLE',
+    'cons.vis.k5':'FACTURACION_ADMIN','cons.vis.v5':'PARCIAL','cons.vis.total.k':'POTENCIAL_AHORRO','cons.vis.total.v':'+60%',
     'pf.label':'// CASOS OPERATIVOS','pf.title':'Portfolio','pf.sub':'Proyectos reales. Resultados reales.',
     'pf.01.tag':'AGENTE IA // WHATSAPP','pf.01.title':'Agente de Atención 24/7','pf.01.desc':'Agente IA que responde, califica leads y agenda reuniones en WhatsApp automáticamente. Cero intervención humana.','pf.01.link':'VER CASO →',
     'pf.02.tag':'CRM + LEADS // SAAS','pf.02.title':'CRM + Detector de Leads','pf.02.desc':'Sistema integrado: CRM visual con pipeline + scraper de Google Maps + scoring de leads con IA. Todo en uno.','pf.02.link':'VER CASO →',
@@ -567,6 +649,15 @@ const T = {
     'svc.05.icon':'MOD_05 // MKT','svc.05.title':'Marketing Digital','svc.05.desc':'Campanhas no Google Ads e TikTok otimizadas para artistas e negócios — com dados, não intuição.',
     'svc.06.icon':'MOD_06 // MKTA','svc.06.title':'Marketing Digital Automatizado','svc.06.desc':'Conteúdo, emails e posts em redes gerados e programados com IA — sua marca ativa 24/7 sem intervenção humana.',
     'svc.07.icon':'MOD_07 // LABEL','svc.07.title':'Gravadora IA','svc.07.desc':'Produção, distribuição e posicionamento de artistas gerados com IA nas plataformas de streaming.',
+    'cons.tag':'// CONSULTORIA EMPRESARIAL','cons.label':'// IMPLEMENTAÇÃO DE IA',
+    'cons.title':'Implemente IA<br>na sua empresa.<br><em style="color:var(--neon);font-style:normal;">Agora.</em>',
+    'cons.desc':'Escaneamos sua operação de ponta a ponta e mapeamos cada ponto onde a IA pode trabalhar por você — processos manuais, tempo da equipe, vendas, atendimento, custos. Sem tecnicismos: um diagnóstico claro com implementação real.',
+    'cons.p1':'Fluxo de trabalho e gargalos operacionais','cons.p2':'Tempo produtivo dos seus funcionários','cons.p3':'Vendas, follow-up e atendimento ao cliente','cons.p4':'Custos que a automação pode eliminar',
+    'cons.urgencia':'As empresas que já implementaram reduziram custos, liberaram horas e venderam mais. As que esperam — vão fazer de qualquer forma, mas quando a vantagem já é do concorrente.',
+    'cons.cta':'QUERO MEU DIAGNÓSTICO →','cons.vis.label':'SCANNING_OPERACAO //',
+    'cons.vis.k1':'ATENDIMENTO_CLIENTES','cons.vis.v1':'AUTOMATIZÁVEL','cons.vis.k2':'SEGUIMENTO_LEADS','cons.vis.v2':'AUTOMATIZÁVEL',
+    'cons.vis.k3':'RELATÓRIOS_INTERNOS','cons.vis.v3':'AUTOMATIZÁVEL','cons.vis.k4':'CONTEUDO_RRSS','cons.vis.v4':'AUTOMATIZÁVEL',
+    'cons.vis.k5':'FATURAMENTO_ADMIN','cons.vis.v5':'PARCIAL','cons.vis.total.k':'POTENCIAL_ECONOMIA','cons.vis.total.v':'+60%',
     'pf.label':'// CASOS OPERATIVOS','pf.title':'Portfólio','pf.sub':'Projetos reais. Resultados reais.',
     'pf.01.tag':'AGENTE IA // WHATSAPP','pf.01.title':'Agente de Atendimento 24/7','pf.01.desc':'Agente IA que responde, qualifica leads e agenda reuniões no WhatsApp automaticamente. Zero intervenção humana.','pf.01.link':'VER CASO →',
     'pf.02.tag':'CRM + LEADS // SAAS','pf.02.title':'CRM + Detector de Leads','pf.02.desc':'Sistema integrado: CRM visual com pipeline + scraper do Google Maps + scoring de leads com IA. Tudo em um.','pf.02.link':'VER CASO →',
@@ -606,6 +697,15 @@ const T = {
     'svc.05.icon':'MOD_05 // MKT','svc.05.title':'Digital Marketing','svc.05.desc':'Google Ads and TikTok campaigns optimized for artists and businesses — data-driven, not intuition.',
     'svc.06.icon':'MOD_06 // MKTA','svc.06.title':'Automated Digital Marketing','svc.06.desc':'Content, emails and social posts generated and scheduled with AI — your brand active 24/7, no human intervention.',
     'svc.07.icon':'MOD_07 // LABEL','svc.07.title':'AI Record Label','svc.07.desc':'Production, distribution and positioning of AI-generated artists on streaming platforms.',
+    'cons.tag':'// BUSINESS CONSULTING','cons.label':'// AI IMPLEMENTATION',
+    'cons.title':'Implement AI<br>in your business.<br><em style="color:var(--neon);font-style:normal;">Now.</em>',
+    'cons.desc':'We scan your entire operation and map every point where AI can work for you — manual processes, team time, sales, customer service, costs. No jargon: a clear diagnosis with real implementation.',
+    'cons.p1':'Workflow and operational bottlenecks','cons.p2':'Productive time of your employees','cons.p3':'Sales, follow-up and customer service','cons.p4':'Costs that automation can eliminate',
+    'cons.urgencia':'Companies that already implemented AI cut costs, freed up hours, and sold more. Those waiting will do it eventually — but by then, someone else has the advantage.',
+    'cons.cta':'I WANT MY DIAGNOSIS →','cons.vis.label':'SCANNING_OPERATION //',
+    'cons.vis.k1':'CUSTOMER_SERVICE','cons.vis.v1':'AUTOMATABLE','cons.vis.k2':'LEAD_FOLLOWUP','cons.vis.v2':'AUTOMATABLE',
+    'cons.vis.k3':'INTERNAL_REPORTS','cons.vis.v3':'AUTOMATABLE','cons.vis.k4':'SOCIAL_CONTENT','cons.vis.v4':'AUTOMATABLE',
+    'cons.vis.k5':'BILLING_ADMIN','cons.vis.v5':'PARTIAL','cons.vis.total.k':'SAVINGS_POTENTIAL','cons.vis.total.v':'+60%',
     'pf.label':'// OPERATIVE CASES','pf.title':'Portfolio','pf.sub':'Real projects. Real results.',
     'pf.01.tag':'AI AGENT // WHATSAPP','pf.01.title':'24/7 Attendance Agent','pf.01.desc':'AI agent that answers, qualifies leads and schedules meetings on WhatsApp automatically. Zero human intervention.','pf.01.link':'VIEW CASE →',
     'pf.02.tag':'CRM + LEADS // SAAS','pf.02.title':'CRM + Lead Detector','pf.02.desc':'Integrated system: visual CRM with pipeline + Google Maps scraper + AI lead scoring. All in one.','pf.02.link':'VIEW CASE →',
