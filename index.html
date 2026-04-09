@@ -911,16 +911,16 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   let pollInterval = null;
 
   // ─── Persistencia de mensajes en localStorage ─────────────────────────────
-  const STORAGE_KEY = 'cris_messages_' + sessionId;
+  function storageKey(){ return 'cris_messages_' + sessionId; }
   function saveMessages(){
     const nodes = msgs ? Array.from(msgs.querySelectorAll('.cm:not(.typing)')).map(el=>({
       html: el.innerHTML, type: el.classList.contains('user')?'user':'bot'
     })) : [];
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(nodes)); } catch(e){}
+    try { localStorage.setItem(storageKey(), JSON.stringify(nodes)); } catch(e){}
   }
   function restoreMessages(){
     try {
-      const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+      const saved = JSON.parse(localStorage.getItem(storageKey()) || '[]');
       saved.forEach(({html, type})=>{
         const el = document.createElement('div');
         el.className = 'cm ' + type;
@@ -943,7 +943,10 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
     #cris-header .info .name{font-size:13px;font-weight:600;color:#e0e0ff;letter-spacing:.04em;}
     #cris-header .info .status{font-size:11px;color:#00ffe7;display:flex;align-items:center;gap:4px;}
     #cris-header .info .status::before{content:'';width:6px;height:6px;border-radius:50%;background:#00ffe7;display:inline-block;}
-    #cris-close{margin-left:auto;background:none;border:none;color:#555;cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;}
+    #cris-header-btns{margin-left:auto;display:flex;align-items:center;gap:4px;}
+    #cris-reset{background:none;border:none;color:#444;cursor:pointer;font-size:14px;line-height:1;padding:2px 5px;title:'Nueva sesión';border-radius:4px;transition:color .15s;}
+    #cris-reset:hover{color:#00ffe7;}
+    #cris-close{background:none;border:none;color:#555;cursor:pointer;font-size:18px;line-height:1;padding:2px 4px;}
     #cris-close:hover{color:#e0e0ff;}
     #cris-messages{flex:1;overflow-y:auto;padding:14px 12px;display:flex;flex-direction:column;gap:8px;scrollbar-width:thin;scrollbar-color:#00ffe720 transparent;}
     .cm{max-width:80%;padding:9px 13px;border-radius:12px;font-size:13px;line-height:1.5;word-break:break-word;}
@@ -976,7 +979,10 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
           <div class="name">Cris — AI Producer Studio</div>
           <div class="status">en línea</div>
         </div>
-        <button id="cris-close" aria-label="Cerrar chat">×</button>
+        <div id="cris-header-btns">
+          <button id="cris-reset" title="Nueva sesión (cliente nuevo)" aria-label="Nueva sesión">↺</button>
+          <button id="cris-close" aria-label="Cerrar chat">×</button>
+        </div>
       </div>
       <div id="cris-messages"></div>
       <div id="cris-input-row">
@@ -997,6 +1003,21 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   const input = document.getElementById('cris-input');
   const send  = document.getElementById('cris-send');
   const close = document.getElementById('cris-close');
+  const resetBtn = document.getElementById('cris-reset');
+
+  function resetSession(){
+    // Limpiar mensajes del localStorage de la sesión actual
+    try { localStorage.removeItem(storageKey()); } catch(e){}
+    // Generar nuevo session ID
+    localStorage.removeItem('cris_session_id');
+    sessionId = getSessionId();
+    // Limpiar UI
+    msgs.innerHTML = '';
+    if(pollInterval){ clearInterval(pollInterval); pollInterval = null; }
+    isGenerating = false;
+    // Saludar como sesión nueva
+    openChat();
+  }
 
   function addMsg(text, type){
     const el = document.createElement('div');
@@ -1067,6 +1088,7 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
 
   btn.addEventListener('click', () => { isOpen ? (isOpen=false, panel.classList.remove('open')) : openChat(); });
   close.addEventListener('click', () => { isOpen=false; panel.classList.remove('open'); });
+  resetBtn.addEventListener('click', resetSession);
   send.addEventListener('click', () => sendMessage(input.value));
   input.addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(input.value); } });
   input.addEventListener('input', () => { input.style.height='auto'; input.style.height=Math.min(input.scrollHeight,80)+'px'; });
