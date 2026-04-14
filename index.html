@@ -933,11 +933,15 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   }
 
   const CSS = `
-    #cris-btn{position:fixed;bottom:90px;right:24px;z-index:9999;width:56px;height:56px;border-radius:50%;border:2px solid #00ffe7;background:#0a0a12;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px #00ffe740;transition:box-shadow .2s;}
-    #cris-btn:hover{box-shadow:0 0 30px #00ffe7aa;}
-    #cris-btn svg{width:26px;height:26px;}
-    #cris-label{position:fixed;bottom:96px;right:90px;z-index:9998;background:#0d0d1a;border:1px solid #00ffe750;border-radius:14px;padding:8px 14px;font-size:11px;font-family:monospace;color:#00ffe7;letter-spacing:.04em;max-width:210px;text-align:right;line-height:1.5;pointer-events:none;opacity:1;transform:translateX(0);transition:opacity .3s ease,transform .3s ease;box-shadow:0 0 16px #00ffe720;}
-    #cris-label.hidden{opacity:0;transform:translateX(8px);pointer-events:none;}
+    #cris-btn{position:fixed;bottom:90px;right:24px;z-index:9999;height:46px;padding:0 18px 0 14px;border-radius:23px;border:2px solid #00ffe7;background:#0a0a12;cursor:pointer;display:flex;align-items:center;gap:9px;box-shadow:0 0 20px #00ffe740;transition:all .25s;white-space:nowrap;}
+    #cris-btn:hover{box-shadow:0 0 32px #00ffe7aa;background:#0d0d20;}
+    #cris-btn svg{width:20px;height:20px;flex-shrink:0;}
+    #cris-btn-label{display:flex;flex-direction:column;align-items:flex-start;line-height:1;}
+    #cris-btn-label strong{font-size:13px;font-family:monospace;color:#fff;letter-spacing:.04em;}
+    #cris-btn-label span{font-size:9.5px;color:rgba(0,255,231,0.65);margin-top:2px;letter-spacing:.03em;}
+    #cris-btn.panel-open #cris-btn-label{display:none;}
+    #cris-btn.panel-open{padding:0 14px;width:46px;justify-content:center;}
+    #cris-label{display:none;}
     #cris-panel{position:fixed;bottom:158px;right:24px;z-index:9998;width:340px;max-width:calc(100vw - 32px);background:#0d0d1a;border:1px solid #00ffe730;border-radius:14px;box-shadow:0 0 40px #00ffe718;display:flex;flex-direction:column;overflow:hidden;transform:scale(0.92) translateY(16px);transform-origin:bottom right;opacity:0;pointer-events:none;transition:transform .2s ease,opacity .2s ease;max-height:520px;}
     #cris-panel.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all;}
     #cris-header{padding:14px 16px;background:#12122a;border-bottom:1px solid #00ffe718;display:flex;align-items:center;gap:10px;}
@@ -969,11 +973,15 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
 
   const wrapper = document.createElement('div');
   wrapper.innerHTML = `
-    <div id="cris-label">Hablá con <strong style="color:#fff">Cris</strong>, nuestra agente IA<br><span style="color:#8888aa;font-size:10px;letter-spacing:.03em">Consultá dudas o testeá el potencial de nuestros agentes</span></div>
+    <div id="cris-label"></div>
     <button id="cris-btn" title="Hablar con Cris" aria-label="Abrir chat con Cris">
       <svg viewBox="0 0 24 24" fill="none" stroke="#00ffe7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
       </svg>
+      <div id="cris-btn-label">
+        <strong>Hablá con Cris</strong>
+        <span>Agente IA · Diagnóstico gratis</span>
+      </div>
     </button>
     <div id="cris-panel">
       <div id="cris-header">
@@ -1009,9 +1017,8 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   const resetBtn = document.getElementById('cris-reset');
   const label = document.getElementById('cris-label');
 
-  // Label: visible por defecto, se oculta con clase 'hidden'
-  function showLabel(){ if(label) label.classList.remove('hidden'); }
-  function hideLabel(){ if(label) label.classList.add('hidden'); }
+  function showLabel(){ btn.classList.remove('panel-open'); }
+  function hideLabel(){ btn.classList.add('panel-open'); }
 
   function resetSession(){
     // Limpiar mensajes del localStorage de la sesión actual
