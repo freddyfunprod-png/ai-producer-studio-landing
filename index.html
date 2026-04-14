@@ -979,8 +979,8 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
       </svg>
       <div id="cris-btn-label">
-        <strong>Hablá con Cris</strong>
-        <span>Agente IA · Diagnóstico gratis</span>
+        <strong id="cris-btn-title">Hablá con Cris</strong>
+        <span id="cris-btn-sub">Agente IA · Diagnóstico gratis</span>
       </div>
     </button>
     <div id="cris-panel">
@@ -1019,6 +1019,27 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
 
   function showLabel(){ btn.classList.remove('panel-open'); }
   function hideLabel(){ btn.classList.add('panel-open'); }
+
+  // Traducción del botón según idioma de la landing
+  const CRIS_BTN_I18N = {
+    es: { title: 'Hablá con Cris', sub: 'Agente IA · Diagnóstico gratis' },
+    pt: { title: 'Fale com a Cris', sub: 'Agente IA · Diagnóstico grátis' },
+    en: { title: 'Chat with Cris',  sub: 'AI Agent · Free Diagnostic' },
+  };
+  function updateBtnLang(lang) {
+    const t = CRIS_BTN_I18N[lang] || CRIS_BTN_I18N['es'];
+    const titleEl = document.getElementById('cris-btn-title');
+    const subEl   = document.getElementById('cris-btn-sub');
+    if(titleEl) titleEl.textContent = t.title;
+    if(subEl)   subEl.textContent   = t.sub;
+  }
+  // Aplicar idioma actual al montar
+  updateBtnLang(typeof currentLang !== 'undefined' ? currentLang : 'es');
+  // Hookear setLang para actualizar al cambiar idioma
+  const _origSetLang = typeof setLang === 'function' ? setLang : null;
+  if(_origSetLang) {
+    window.setLang = function(lang) { _origSetLang(lang); updateBtnLang(lang); };
+  }
 
   function resetSession(){
     // Limpiar mensajes del localStorage de la sesión actual
