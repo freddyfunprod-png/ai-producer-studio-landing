@@ -936,9 +936,8 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
     #cris-btn{position:fixed;bottom:90px;right:24px;z-index:9999;width:56px;height:56px;border-radius:50%;border:2px solid #00ffe7;background:#0a0a12;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 0 18px #00ffe740;transition:box-shadow .2s;}
     #cris-btn:hover{box-shadow:0 0 30px #00ffe7aa;}
     #cris-btn svg{width:26px;height:26px;}
-    #cris-label{position:fixed;bottom:96px;right:90px;z-index:9998;background:#0d0d1a;border:1px solid #00ffe750;border-radius:14px;padding:8px 14px;font-size:11px;font-family:monospace;color:#00ffe7;letter-spacing:.04em;max-width:210px;text-align:right;line-height:1.5;pointer-events:none;opacity:0;transform:translateX(8px);transition:opacity .3s ease,transform .3s ease;box-shadow:0 0 16px #00ffe720;}
-    #cris-label.visible{opacity:1;transform:translateX(0);}
-    #cris-btn:hover ~ #cris-label, #cris-btn:hover + #cris-label{opacity:1;transform:translateX(0);}
+    #cris-label{position:fixed;bottom:96px;right:90px;z-index:9998;background:#0d0d1a;border:1px solid #00ffe750;border-radius:14px;padding:8px 14px;font-size:11px;font-family:monospace;color:#00ffe7;letter-spacing:.04em;max-width:210px;text-align:right;line-height:1.5;pointer-events:none;opacity:1;transform:translateX(0);transition:opacity .3s ease,transform .3s ease;box-shadow:0 0 16px #00ffe720;}
+    #cris-label.hidden{opacity:0;transform:translateX(8px);pointer-events:none;}
     #cris-panel{position:fixed;bottom:158px;right:24px;z-index:9998;width:340px;max-width:calc(100vw - 32px);background:#0d0d1a;border:1px solid #00ffe730;border-radius:14px;box-shadow:0 0 40px #00ffe718;display:flex;flex-direction:column;overflow:hidden;transform:scale(0.92) translateY(16px);transform-origin:bottom right;opacity:0;pointer-events:none;transition:transform .2s ease,opacity .2s ease;max-height:520px;}
     #cris-panel.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all;}
     #cris-header{padding:14px 16px;background:#12122a;border-bottom:1px solid #00ffe718;display:flex;align-items:center;gap:10px;}
@@ -1010,10 +1009,9 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   const resetBtn = document.getElementById('cris-reset');
   const label = document.getElementById('cris-label');
 
-  // Label: siempre visible cuando el panel está cerrado
-  function showLabel(){ if(label) label.classList.add('visible'); }
-  function hideLabel(){ if(label) label.classList.remove('visible'); }
-  setTimeout(showLabel, 800); // aparece suave al cargar
+  // Label: visible por defecto, se oculta con clase 'hidden'
+  function showLabel(){ if(label) label.classList.remove('hidden'); }
+  function hideLabel(){ if(label) label.classList.add('hidden'); }
 
   function resetSession(){
     // Limpiar mensajes del localStorage de la sesión actual
