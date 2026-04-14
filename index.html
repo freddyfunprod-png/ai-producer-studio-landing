@@ -933,15 +933,15 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   }
 
   const CSS = `
-    #cris-btn{position:fixed;bottom:90px;right:24px;z-index:9999;height:46px;padding:0 18px 0 14px;border-radius:23px;border:2px solid #00ffe7;background:#0a0a12;cursor:pointer;display:flex;align-items:center;gap:9px;box-shadow:0 0 20px #00ffe740;transition:all .25s;white-space:nowrap;}
-    #cris-btn:hover{box-shadow:0 0 32px #00ffe7aa;background:#0d0d20;}
-    #cris-btn svg{width:20px;height:20px;flex-shrink:0;}
-    #cris-btn-label{display:flex;flex-direction:column;align-items:flex-start;line-height:1;}
-    #cris-btn-label strong{font-size:13px;font-family:monospace;color:#fff;letter-spacing:.04em;}
-    #cris-btn-label span{font-size:9.5px;color:rgba(0,255,231,0.65);margin-top:2px;letter-spacing:.03em;}
-    #cris-btn.panel-open #cris-btn-label{display:none;}
-    #cris-btn.panel-open{padding:0 14px;width:46px;justify-content:center;}
-    #cris-label{display:none;}
+    #cris-btn{position:fixed!important;bottom:90px!important;right:24px!important;z-index:9999!important;height:46px!important;width:auto!important;padding:0 18px 0 14px!important;border-radius:23px!important;border:2px solid #00ffe7!important;background:#0a0a12!important;cursor:pointer!important;display:flex!important;align-items:center!important;gap:9px!important;box-shadow:0 0 20px #00ffe740!important;transition:all .25s!important;white-space:nowrap!important;}
+    #cris-btn:hover{box-shadow:0 0 32px #00ffe7aa!important;background:#0d0d20!important;}
+    #cris-btn svg{width:20px!important;height:20px!important;flex-shrink:0!important;}
+    #cris-btn-label{display:flex!important;flex-direction:column!important;align-items:flex-start!important;line-height:1!important;}
+    #cris-btn-label strong{font-size:13px!important;font-family:monospace!important;color:#fff!important;letter-spacing:.04em!important;}
+    #cris-btn-label span{font-size:9.5px!important;color:rgba(0,255,231,0.65)!important;margin-top:2px!important;letter-spacing:.03em!important;}
+    #cris-btn.panel-open #cris-btn-label{display:none!important;}
+    #cris-btn.panel-open{padding:0 14px!important;width:46px!important;justify-content:center!important;}
+    #cris-label{display:none!important;}
     #cris-panel{position:fixed;bottom:158px;right:24px;z-index:9998;width:340px;max-width:calc(100vw - 32px);background:#0d0d1a;border:1px solid #00ffe730;border-radius:14px;box-shadow:0 0 40px #00ffe718;display:flex;flex-direction:column;overflow:hidden;transform:scale(0.92) translateY(16px);transform-origin:bottom right;opacity:0;pointer-events:none;transition:transform .2s ease,opacity .2s ease;max-height:520px;}
     #cris-panel.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all;}
     #cris-header{padding:14px 16px;background:#12122a;border-bottom:1px solid #00ffe718;display:flex;align-items:center;gap:10px;}
