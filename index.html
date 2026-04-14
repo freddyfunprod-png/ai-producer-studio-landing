@@ -1010,13 +1010,10 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   const resetBtn = document.getElementById('cris-reset');
   const label = document.getElementById('cris-label');
 
-  // Label: mostrar 5s al cargar, luego en hover del botón
-  let labelTimer = null;
-  function showLabel(){ if(label){ label.classList.add('visible'); } }
-  function hideLabel(){ if(label){ label.classList.remove('visible'); } }
-  setTimeout(() => { showLabel(); labelTimer = setTimeout(hideLabel, 5000); }, 1200);
-  btn.addEventListener('mouseenter', () => { clearTimeout(labelTimer); showLabel(); });
-  btn.addEventListener('mouseleave', () => { labelTimer = setTimeout(hideLabel, 1500); });
+  // Label: siempre visible cuando el panel está cerrado
+  function showLabel(){ if(label) label.classList.add('visible'); }
+  function hideLabel(){ if(label) label.classList.remove('visible'); }
+  setTimeout(showLabel, 800); // aparece suave al cargar
 
   function resetSession(){
     // Limpiar mensajes del localStorage de la sesión actual
@@ -1080,6 +1077,7 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
   async function openChat(){
     isOpen = true;
     panel.classList.add('open');
+    hideLabel();
     if(msgs.children.length === 0){
       const hasHistory = restoreMessages();
       if(!hasHistory){
@@ -1099,8 +1097,8 @@ const CRIS_API_URL = 'https://whatsapp-agent-cris-production.up.railway.app';
     setTimeout(() => input.focus(), 200);
   }
 
-  btn.addEventListener('click', () => { isOpen ? (isOpen=false, panel.classList.remove('open')) : openChat(); });
-  close.addEventListener('click', () => { isOpen=false; panel.classList.remove('open'); });
+  btn.addEventListener('click', () => { isOpen ? (isOpen=false, panel.classList.remove('open'), showLabel()) : openChat(); });
+  close.addEventListener('click', () => { isOpen=false; panel.classList.remove('open'); showLabel(); });
   resetBtn.addEventListener('click', resetSession);
   send.addEventListener('click', () => sendMessage(input.value));
   input.addEventListener('keydown', e => { if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendMessage(input.value); } });
